@@ -1,43 +1,57 @@
 <?php
+
+namespace Cwchong\SilverstripeEditorgallery\model;
+
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Permission;
 /**
  * Translatable captions
  */
-class InPageGalleryPhoto extends MultilingualDataObject
+class InPageGalleryPhoto extends DataObject
 {
+    private static $table_name = 'Cw_SEG_InPageGalleryPhoto';
     private static $singular_name = 'Photo';
     private static $plural_name = 'Photos';
+
+    private static $extensions = [
+        FluentExtension::class,
+    ];
 
     /**
      * @var array
      */
-    private static $db = array(
-        // 'SortOrder' => 'Int', // ML-DO already has SortOrder field defined
-        'Caption' => 'Text'
-    );
+    private static $db = [
+        'Caption' => 'Text',
+        'SortOrder' => 'Int',
+    ];
     
     /**
      * @var array
      */
-    public static $multilingual_fields = array(
+    public static $translate = [
         'Caption'
-    );
+    ];
     
     /**
      * @var array
      */
-    private static $has_one = array(
-        'Gallery' => 'InPageGallery',
-        'Image' => 'Image',
-        'ImageSmall' => 'Image'
-    );
+    private static $has_one = [
+        'Gallery' => InPageGallery::class,
+        'Image' => Image::class,
+        'ImageSmall' => Image::class,
+    ];
     
     /**
      * @var array
      */
-    private static $summary_fields = array(
+    private static $summary_fields = [
         'Image.CMSThumbnail' => 'Image',
         'Caption' => 'Caption',
-    );
+    ];
     
     /**
      * @var string|array
@@ -49,62 +63,36 @@ class InPageGalleryPhoto extends MultilingualDataObject
      */
     public function getCMSFields()
     {
+        $this->beforeUpdateCMSFields(function(FieldList $f) {
+            $f->replaceField('Caption', TextField::create('Caption'));// not using textarea as misleading fe supports newline
+        });
+
 		$fields = parent::getCMSFields();
-        $fields->removeByName('GalleryID');
-        $fields->removeByName('SortOrder');
-        $fields->removeByName('Caption'); // else we cannot reposition
+        $fields->removeByName([
+            'GalleryID',
+            'SortOrder',
+        ]);
         
         $folder = 'Gallery/' . $this->GalleryID;
         
-        $fields->addFieldsToTab('Root.Main', array(
+        $fields->addFieldsToTab('Root.Main', [
             UploadField::create('Image')
                 ->setFolderName($folder)
-                ->setDisplayFolderName($folder)
                 ->setAllowedFileCategories('image'),
             UploadField::create('ImageSmall', 'Image (small)')
                 ->setFolderName($folder)
-                ->setDisplayFolderName($folder)
                 ->setAllowedFileCategories('image')
                 ->setDescription('Displayed in Wide Carousel'),
-            TextField::create('Caption') // not using textarea as misleading fe supports newline
-        ));
+        ], 'Caption');
         
-        $this->doExtend('updateCMSFields', $fields, get_class());
         return $fields;
-    }
-    
-    /**
-     * fix for multiple entries added without re-ordering, resulting in all having sortorder 0
-     */
-    protected function onBeforeWrite() {
-        if(!$this->SortOrder) {
-            $this->SortOrder = 1;
-            /* calling ->write() can potentially be recursively calling onBeforeWrite; instead use direct query */
-            /* for ML-DOs, the sort column is on base MLDO, but Parent is in descendant do */
-            $update = SQLUpdate::create('"MultilingualDataObject","InPageGalleryPhoto"')
-                /*->addInnerJoin('"VideoSeries"', // inner join dun work for SQLUpdate atm 
-                    '"MultilingualDataObject"."ID" = "VideoSeries"."ID"',
-                    null,
-                    10,
-                    array()
-                )*/
-                ->addWhere('"MultilingualDataObject"."ID" = "InPageGalleryPhoto"."ID"')
-                ->addWhere(array(
-                    '"InPageGalleryPhoto"."GalleryID" = ?' => $this->GalleryID,
-                    '"MultilingualDataObject"."ID" != ?' => $this->ID
-                ))
-            ;
-            $update->assignSQL('"MultilingualDataObject"."SortOrder"', '"MultilingualDataObject"."SortOrder" + 1');
-            $update->execute();
-        }
-        parent::onBeforeWrite();
     }
     
     public function canView($member = null) {
         return Permission::check('CMS_ACCESS_CMSMain');
     }
     
-    public function canCreate($member = null) {
+    public function canCreate($member = null, $context = []) {
 	   return Permission::check('CMS_ACCESS_CMSMain');
     }
     

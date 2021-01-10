@@ -1,41 +1,56 @@
 <?php
+
+namespace Cwchong\SilverstripeEditorgallery\model;
+
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\Forms\GridField\GridFieldPageCount;
+use SilverStripe\Forms\GridField\GridFieldPaginator;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Permission;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+
 /**
  * Gallery is not translatable, but its images are due to captions
  */
 class InPageGallery extends DataObject
 {
+    private static $table_name = 'Cw_SEG_InPageGallery';
     private static $singular_name = 'Gallery';
     private static $plural_name = 'Galleries';
 
     /**
      * @var array
      */
-    private static $db = array(
+    private static $db = [
         'Name' => 'Varchar(255)',
-    );
+    ];
     
     /**
      * @var array
      */
-    private static $has_one = array(
-        'Page' => 'Page',
-        'Background' => 'Image'
-    );
+    private static $has_one = [
+        'Page' => \Page::class,
+        'Background' => Image::class
+    ];
     
     /**
      * @var array
      */
-    private static $has_many = array(
-        'Photos' => 'InPageGalleryPhoto',
-    );
+    private static $has_many = [
+        'Photos' => InPageGalleryPhoto::class,
+    ];
     
     /**
      * @var array
      */
-    private static $summary_fields = array(
+    private static $summary_fields = [
         'Name' => 'Name',
         'NumPhotos' => '# Photos'
-    );
+    ];
     
     /**
      * @var string|array
@@ -45,7 +60,8 @@ class InPageGallery extends DataObject
     /**
      * @return integer
      */
-    public function getNumPhotos() {
+    public function getNumPhotos() 
+    {
         return $this->Photos()->Count();
     }
 
@@ -55,37 +71,38 @@ class InPageGallery extends DataObject
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->removeByName('PageID');
-        $fields->removeByName('Photos'); // in order to remove the extra tab
+        $fields->removeByName([
+            'PageID',
+            'Photos' // in order to remove the extra tab
+        ]);
         
         if($this->ID) {
             $folder = 'Gallery/' . $this->ID;
             
             $gridConfig = GridFieldConfig_RecordEditor::create();
             $gridConfig->addComponent(new GridFieldOrderableRows('SortOrder'));
-            $gridConfig->addComponent(new GridFieldBulkUpload());
-            $gridConfig->getComponentByType('GridFieldBulkUpload')->setUfSetup('setFolderName', 'Gallery/' . $this->ID);
-            $gridConfig->removeComponentsByType('GridFieldPaginator');
-            $gridConfig->removeComponentsByType('GridFieldPageCount');
+            // xxxx require bulkedit tools
+            // $gridConfig->addComponent(new GridFieldBulkUpload());
+            // $gridConfig->getComponentByType('GridFieldBulkUpload')->setUfSetup('setFolderName', 'Gallery/' . $this->ID);
+            $gridConfig->removeComponentsByType(GridFieldPaginator::class);
+            $gridConfig->removeComponentsByType(GridFieldPageCount::class);
             $gridField = GridField::create(
                 'Photos',
                 'Photos',
                 $this->Photos(),
                 $gridConfig
             );
-            $fields->addFieldsToTab('Root.Main', array(
+            $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Background', 'Background')
                     ->setFolderName($folder)
-                    ->setDisplayFolderName($folder)
                     ->setAllowedFileCategories('image')
                     ->setDescription('Displayed in Wide Carousel'),
                 $gridField
-            ));
+            ]);
         } else {
             $fields->addFieldToTab('Root.Main', LiteralField::create('notice', '<em>Save this Gallery before adding Photos</em>'));
         }
         
-        $this->extend('updateCMSFields', $fields);
         return $fields;
     }
     
@@ -100,32 +117,34 @@ class InPageGallery extends DataObject
      * @return mixed (null | string)
      * @see \ShortcodeParser
      */
-    public static function inpagegallery_shortcode_handler($arguments, $content = null, $parser = null)
-    {
-        // return null if the id argument is not valid
-        if (!isset($arguments['id']) || !is_numeric($arguments['id'])) {
-            return;
-        }
+    // xxxx kiv
+    // public static function inpagegallery_shortcode_handler($arguments, $content = null, $parser = null)
+    // {
+    //     // return null if the id argument is not valid
+    //     if (!isset($arguments['id']) || !is_numeric($arguments['id'])) {
+    //         return;
+    //     }
         
-        // Load the Advertisement DataObject using the id from $arguments array, else return null if it was not found
-        if (!($inpagegallery = DataObject::get_by_id('InPageGallery', $arguments['id']))) {
-            return;
-        }
+    //     // Load the Advertisement DataObject using the id from $arguments array, else return null if it was not found
+    //     if (!($inpagegallery = DataObject::get_by_id('InPageGallery', $arguments['id']))) {
+    //         return;
+    //     }
         
-        $type = 'grid';
-        if(isset($arguments['type']))
-            $type = $arguments['type'];
+    //     $type = 'grid';
+    //     if(isset($arguments['type']))
+    //         $type = $arguments['type'];
 
-        $data = new ArrayData(array('Gallery' => $inpagegallery));
-        return $data->renderWith('InPageGallery_'.$type);
+    //     $data = new ArrayData(array('Gallery' => $inpagegallery));
+    //     return $data->renderWith('InPageGallery_'.$type);
         
-    }
+    // }
     
-    public function canView($member = null) {
+    public function canView($member = null) 
+    {
         return Permission::check('CMS_ACCESS_CMSMain');
     }
     
-    public function canCreate($member = null) {
+    public function canCreate($member = null, $context = []) {
 	   return Permission::check('CMS_ACCESS_CMSMain');
     }
     
