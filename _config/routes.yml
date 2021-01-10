@@ -1,0 +1,8 @@
+## inpage controller routes
+Name: inpagegallery-route
+After: framework/routes#coreroutes
+---
+Director:
+  rules:
+    'inpagegallery//$Action/$ID/$Name': 'InPageGalleryController'
+    'inpagetimeline//$Action/$ID/$Name': 'InPageTimelineController'

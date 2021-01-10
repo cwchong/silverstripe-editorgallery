@@ -1,0 +1,1 @@
+tinyMCE.addI18n('en.ss_insert_inpagetimeline',{title:'Insert Timeline',label:'Timelines'});

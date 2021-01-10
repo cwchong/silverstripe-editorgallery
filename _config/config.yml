@@ -1,0 +1,7 @@
+---
+Name: inpagegallery-config
+---
+Page:
+  extensions:
+    - InPageGalleryExtension
+    - InPageTimelineExtension

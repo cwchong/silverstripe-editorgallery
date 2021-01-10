@@ -1,0 +1,30 @@
+{
+	"name": "cwchong/cw_pagegallery",
+	"type": "silverstripe-vendormodule",
+	"description": "SilverStripe 4 gallery plugin in tinymce",
+	"keywords": ["silverstripe", "silverstripe 4", "gallery", "htmleditor", "tinymce"],
+	"license": "BSD Simplified",
+	"authors": [{
+		"name": "Chong Chee Wai",
+		"email": "cheewai@movingmouse.com"
+	}],
+	"require": {
+		"php": "^7.1",
+		"silverstripe/framework": "^4",
+	},
+	"autoload": {
+		"psr-4": {
+			"Cwchong\\Cw_pagegallery\\": "src/"
+		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "3.0.x-dev"
+		},
+		"expose": [
+			"client/dist"
+		]
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true
+}
