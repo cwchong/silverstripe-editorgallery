@@ -11,7 +11,9 @@
 	"require": {
 		"php": "^7.1",
 		"silverstripe/framework": "^4",
-    "colymba/gridfield-bulk-editing-tools": "^3"
+    "colymba/gridfield-bulk-editing-tools": "dev-master",
+    "symbiote/silverstripe-gridfieldextensions": "^3.1",
+    "tractorcow/silverstripe-fluent": "5"
 	},
 	"autoload": {
 		"psr-4": {

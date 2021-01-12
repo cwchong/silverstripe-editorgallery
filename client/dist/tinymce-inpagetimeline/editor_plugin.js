@@ -76,7 +76,7 @@
       // define the ui btn with list of galleries to insert:
       ed.addButton('ss_insert_inpagetimeline', {
         title: 'Insert Timeline',
-        image: url + '/../../images/timeline-20.png',
+        image: url + '/../images/timeline-20.png',
         type: 'menubutton',
         menu: (function () { 
           var options = [];
@@ -85,8 +85,8 @@
             url: ed.documentBaseURI.toAbsolute('inpagetimeline/json'),
               data: { pageid: jQuery('#Form_EditForm_ID').val() }, 
               success: function(apiResponseJson) {
-                if(! Object.keys(apiResponseJson).length)
-                  return alert("Sorry, no active 'Timeline' could be found!");
+                if (!Object.keys(apiResponseJson).length)
+                  return; // alert("Sorry, no active 'Timeline' could be found!");
                 jQuery.each(apiResponseJson, function(id, name) {
                   options.push({
                     text: name,

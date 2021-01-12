@@ -53,6 +53,10 @@ class InPageGalleryPhoto extends DataObject
         'Image.CMSThumbnail' => 'Image',
         'Caption' => 'Caption',
     ];
+
+    private static $owns = [
+        'Image', 'ImageSmall',
+    ];
     
     /**
      * @var string|array

@@ -53,6 +53,10 @@ class InPageGallery extends DataObject
         'Name' => 'Name',
         'NumPhotos' => '# Photos'
     ];
+
+    private static $owns = [
+        'Background', 'Photos'
+    ];
     
     /**
      * @var string|array
@@ -125,11 +129,13 @@ class InPageGallery extends DataObject
     {
         // return null if the id argument is not valid
         if (!isset($arguments['id']) || !is_numeric($arguments['id'])) {
+            return '<p>meow</p>';
             return;
         }
         
         // Load the Advertisement DataObject using the id from $arguments array, else return null if it was not found
         if (!($inpagegallery = DataObject::get_by_id(InPageGallery::class, $arguments['id']))) {
+            return '<p>woff</p>';
             return;
         }
         
@@ -137,9 +143,8 @@ class InPageGallery extends DataObject
         if(isset($arguments['type']))
             $type = $arguments['type'];
 
-        $data = new ArrayData(array('Gallery' => $inpagegallery));
+        $data = new ArrayData(['Gallery' => $inpagegallery]);
         return $data->renderWith('InPageGallery_'.$type);
-        
     }
     
     public function canView($member = null) 

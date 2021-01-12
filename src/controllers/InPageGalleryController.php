@@ -47,5 +47,7 @@ class InPageGalleryController extends \PageController
             $this->response->setBody(json_encode($list->toArray()));
             return $this->response;
         }
+        $this->response->setBody(json_encode([]));
+        return $this->response;
     }
 }

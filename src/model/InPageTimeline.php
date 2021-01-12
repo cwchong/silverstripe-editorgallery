@@ -65,7 +65,7 @@ class InPageTimeline extends DataObject
     /**
      * @var string|array
      */
-    private static $default_sort = 'Name ASC';
+    private static $default_sort = '"Name" ASC'; // double quote for fluent compat
     
     /**
      * @return integer
@@ -120,7 +120,6 @@ class InPageTimeline extends DataObject
      * @return mixed (null | string)
      * @see \ShortcodeParser
      */
-    /// xxxx kiv
     public static function inpagetimeline_shortcode_handler($arguments, $content = null, $parser = null)
     {
         // return null if the id argument is not valid
@@ -137,7 +136,7 @@ class InPageTimeline extends DataObject
         if(isset($arguments['type']))
             $type = $arguments['type'];
 
-        $data = new ArrayData(array('Timeline' => $inpagetimeline));
+        $data = new ArrayData(['Timeline' => $inpagetimeline]);
         return $data->renderWith('InPageTimeline_'.$type);
         
     }

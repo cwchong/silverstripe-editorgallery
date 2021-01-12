@@ -85,8 +85,9 @@
             url: ed.documentBaseURI.toAbsolute('inpagegallery/json'),
               data: { pageid: jQuery('#Form_EditForm_ID').val() }, 
               success: function(apiResponseJson) {
-                if(! Object.keys(apiResponseJson).length)
-                  return alert("Sorry, no active 'Gallery' could be found!");
+                if (!Object.keys(apiResponseJson).length) {
+                  return; // alert("Sorry, no active 'Gallery' could be found!");
+                }
                 jQuery.each(apiResponseJson, function(id, name) {
                   options.push({
                     text: name,
@@ -113,10 +114,10 @@
                   });
                 });
               },
-              error: function( xhr, status ) {
+            error: function (xhr, status) {
                 return alert("Sorry, no active 'Gallery' could be found!");
               }
-            });
+          });
           return options;
         })()
       });
