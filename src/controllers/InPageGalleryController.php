@@ -1,18 +1,24 @@
 <?php
+
+namespace Cwchong\SilverstripeEditorgallery\controllers;
+
+use Cwchong\SilverstripeEditorgallery\model\InPageGallery;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Security\Permission;
 /**
  * Controller to respond to the javascript api call to populate the dropdown options 
  * within the tinymce component that inserts inpagegallery shortcodes
  *
  */
-class InPageGalleryController extends Controller
+class InPageGalleryController extends \PageController
 {
 
     /**
      * @var array $allowed_actions whitelisting of public methods available in this Controller 
      */
-    private static $allowed_actions = array(
-        'json'
-    );
+    private static $allowed_actions = [
+        'json',
+    ];
 
     /**
      * Initialises the controller and ensures that only
@@ -33,11 +39,11 @@ class InPageGalleryController extends Controller
      * @return SS_HTTPResonse A http response containing a json encoded array
      * @see: /_config/routes.yml
      */
-    public function json(SS_HTTPRequest $request)
+    public function json(HTTPRequest $request)
     {
         $this->response->addHeader('Content-Type', 'application/json');
         $pageid = $request->getVar('pageid');
-        if($pageid && ($list = InPageGallery::get()->filter(array('PageID' => intval($pageid)))->map('ID', 'Name'))) {
+        if($pageid && ($list = InPageGallery::get()->filter(['PageID' => intval($pageid)])->map('ID', 'Name'))) {
             $this->response->setBody(json_encode($list->toArray()));
             return $this->response;
         }

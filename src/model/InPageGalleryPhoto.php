@@ -8,6 +8,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
+use TractorCow\Fluent\Extension\FluentExtension;
 /**
  * Translatable captions
  */

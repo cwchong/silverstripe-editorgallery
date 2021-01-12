@@ -1,8 +1,10 @@
-## inpage controller routes
-Name: inpagegallery-route
-After: framework/routes#coreroutes
 ---
-Director:
+Name: inpagegallery-route
+After:
+  - '#rootroutes'
+  - '#coreroutes'
+---
+SilverStripe\Control\Director:
   rules:
-    'inpagegallery//$Action/$ID/$Name': 'InPageGalleryController'
-    'inpagetimeline//$Action/$ID/$Name': 'InPageTimelineController'
+    'inpagegallery//$Action/$ID/$Name': 'Cwchong\SilverstripeEditorgallery\controllers\InPageGalleryController'
+#    'inpagetimeline//$Action/$ID/$Name': InPageTimelineController

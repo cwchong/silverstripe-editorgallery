@@ -2,6 +2,7 @@
 
 namespace Cwchong\SilverstripeEditorgallery\model;
 
+use Colymba\BulkUpload\BulkUploader;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\GridField\GridField;
@@ -81,9 +82,10 @@ class InPageGallery extends DataObject
             
             $gridConfig = GridFieldConfig_RecordEditor::create();
             $gridConfig->addComponent(new GridFieldOrderableRows('SortOrder'));
-            // xxxx require bulkedit tools
-            // $gridConfig->addComponent(new GridFieldBulkUpload());
-            // $gridConfig->getComponentByType('GridFieldBulkUpload')->setUfSetup('setFolderName', 'Gallery/' . $this->ID);
+            $gridConfig->addComponent(new BulkUploader());
+            /** @var BulkUploader $uploadConfig */
+            $uploadConfig = $gridConfig->getComponentByType(BulkUploader::class);
+            $uploadConfig->setUfSetup('setFolderName', 'Gallery/' . $this->ID);
             $gridConfig->removeComponentsByType(GridFieldPaginator::class);
             $gridConfig->removeComponentsByType(GridFieldPageCount::class);
             $gridField = GridField::create(

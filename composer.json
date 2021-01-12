@@ -1,5 +1,5 @@
 {
-	"name": "cwchong/cw_pagegallery",
+	"name": "cwchong/silverstripe-editorgallery",
 	"type": "silverstripe-vendormodule",
 	"description": "SilverStripe 4 gallery plugin in tinymce",
 	"keywords": ["silverstripe", "silverstripe 4", "gallery", "htmleditor", "tinymce"],
@@ -11,6 +11,7 @@
 	"require": {
 		"php": "^7.1",
 		"silverstripe/framework": "^4",
+    "colymba/gridfield-bulk-editing-tools": "^3"
 	},
 	"autoload": {
 		"psr-4": {
