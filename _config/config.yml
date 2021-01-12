@@ -4,4 +4,4 @@ Name: inpagegallery-config
 Page:
   extensions:
     - Cwchong\SilverstripeEditorgallery\extensions\InPageGalleryExtension
-    # - Cwchong\SilverstripeEditorgallery\extensions\InPageTimelineExtension
+    - Cwchong\SilverstripeEditorgallery\extensions\InPageTimelineExtension

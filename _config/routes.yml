@@ -7,4 +7,4 @@ After:
 SilverStripe\Control\Director:
   rules:
     'inpagegallery//$Action/$ID/$Name': 'Cwchong\SilverstripeEditorgallery\controllers\InPageGalleryController'
-#    'inpagetimeline//$Action/$ID/$Name': InPageTimelineController
+    'inpagetimeline//$Action/$ID/$Name': 'Cwchong\SilverstripeEditorgallery\controllers\InPageTimelineController'

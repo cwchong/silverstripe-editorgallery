@@ -12,6 +12,7 @@ use SilverStripe\Forms\GridField\GridFieldPaginator;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
+use SilverStripe\View\ArrayData;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
@@ -120,26 +121,26 @@ class InPageGallery extends DataObject
      * @see \ShortcodeParser
      */
     // xxxx kiv
-    // public static function inpagegallery_shortcode_handler($arguments, $content = null, $parser = null)
-    // {
-    //     // return null if the id argument is not valid
-    //     if (!isset($arguments['id']) || !is_numeric($arguments['id'])) {
-    //         return;
-    //     }
+    public static function inpagegallery_shortcode_handler($arguments, $content = null, $parser = null)
+    {
+        // return null if the id argument is not valid
+        if (!isset($arguments['id']) || !is_numeric($arguments['id'])) {
+            return;
+        }
         
-    //     // Load the Advertisement DataObject using the id from $arguments array, else return null if it was not found
-    //     if (!($inpagegallery = DataObject::get_by_id('InPageGallery', $arguments['id']))) {
-    //         return;
-    //     }
+        // Load the Advertisement DataObject using the id from $arguments array, else return null if it was not found
+        if (!($inpagegallery = DataObject::get_by_id(InPageGallery::class, $arguments['id']))) {
+            return;
+        }
         
-    //     $type = 'grid';
-    //     if(isset($arguments['type']))
-    //         $type = $arguments['type'];
+        $type = 'grid';
+        if(isset($arguments['type']))
+            $type = $arguments['type'];
 
-    //     $data = new ArrayData(array('Gallery' => $inpagegallery));
-    //     return $data->renderWith('InPageGallery_'.$type);
+        $data = new ArrayData(array('Gallery' => $inpagegallery));
+        return $data->renderWith('InPageGallery_'.$type);
         
-    // }
+    }
     
     public function canView($member = null) 
     {

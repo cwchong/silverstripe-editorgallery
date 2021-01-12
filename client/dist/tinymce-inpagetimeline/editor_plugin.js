@@ -2,14 +2,14 @@
 
   var availableLangs = ['en'];
   if (jQuery.inArray(tinymce.settings.language, availableLangs) != -1) {
-    tinymce.PluginManager.requireLangPack("ss_insert_inpagegallery");
+    tinymce.PluginManager.requireLangPack("ss_insert_inpagetimeline");
   }
 
   var each = tinymce.each;
-  tinymce.create('tinymce.plugins.InsertInPageGallery', {
+  tinymce.create('tinymce.plugins.InsertInPageTimeline', {
     getInfo: function () {
       return {
-        longname: 'Button to insert Galleries',
+        longname: 'Button to insert Timelines',
         author: 'Chong Chee Wai',
         authorurl: 'http://www.movingmouse.com/',
         infourl: 'https://github.com/cwchong/silverstripe-editorgallery',
@@ -19,14 +19,14 @@
     init: function (ed, url) {
       // single enter exits the div and creates a paragraph
       ed.on('keydown', function (e) {
+        var dom = ed.dom;
         // Capture Enter without shift
         if ((e.keyCode == 13)) {
-          var dom = ed.dom;
           var parents = dom.getParents(ed.selection.getNode());
           for (var i = parents.length - 1; i >= 0; i--) {
             currentNode = parents[i];
             // Insert empty paragraph at the end of the outermost blockquote tag
-            if (currentNode.className == 'ss-inpagegallerywrap') {
+            if (currentNode.className == 'ss-inpagetimelinewrap') {
               // dom.insertAfter doesn't work reliably
               var uniqueID = dom.uniqueId();
               // dom.uniqueId() is only guaranteed unique in session, need to find if exists in editor:
@@ -53,7 +53,7 @@
         if (e.keyCode == 8 || e.keyCode == 46) { //backspace and delete keycodes
           try {
             var elem = ed.selection.getNode().parentNode; //current caret node
-            if (elem.classList.contains("ss-inpagegallerywrap")) {
+            if (elem.classList.contains("ss-inpagetimelinewrap")) {
               elem.remove();
               // parent remove should take care of child nodes
               e.preventDefault();
@@ -66,47 +66,47 @@
       });
 
       var handleBtnClick = function (id, type, text) {
-        var output = '<div class="ss-inpagegallerywrap"><img class="ss-inpagegallery" data-id="' + id + 
-                      '" data-type="' + type + '" alt="Gallery placeholder" title="Gallery: ' + 
-          text + '" src="' + url + '/img/gallery-' + type + '.png?"></div>';
+        var output = '<div class="ss-inpagetimelinewrap"><img class="ss-inpagetimeline" data-id="' + id + 
+          '" data-type="' + type + '" alt="Timeline placeholder" title="Timeline: ' + 
+          text + '" src="'+ url +'/img/timeline-' + type + '.png?"></div>';
         ed.execCommand('mceInsertContent', false, output);
         ed.execCommand('mceRepaint');
       }
 
       // define the ui btn with list of galleries to insert:
-      ed.addButton('ss_insert_inpagegallery', {
-        title: 'Insert Gallery',
-        image: url + '/../images/gallery-16.png',
+      ed.addButton('ss_insert_inpagetimeline', {
+        title: 'Insert Timeline',
+        image: url + '/../../images/timeline-20.png',
         type: 'menubutton',
         menu: (function () { 
           var options = [];
           jQuery.ajax({
             async: false,
-            url: ed.documentBaseURI.toAbsolute('inpagegallery/json'),
+            url: ed.documentBaseURI.toAbsolute('inpagetimeline/json'),
               data: { pageid: jQuery('#Form_EditForm_ID').val() }, 
               success: function(apiResponseJson) {
                 if(! Object.keys(apiResponseJson).length)
-                  return alert("Sorry, no active 'Gallery' could be found!");
+                  return alert("Sorry, no active 'Timeline' could be found!");
                 jQuery.each(apiResponseJson, function(id, name) {
                   options.push({
                     text: name,
                     menu: [
                       {
-                        text: 'Grid',
+                        text: 'Horizontal',
                         onclick: function () {
-                          handleBtnClick(id, 'grid', name);
+                          handleBtnClick(id, 'horizontal', name);
                         }
                       },
                       {
-                        text: 'Carousel',
+                        text: 'Accordion',
                         onclick: function () {
-                          handleBtnClick(id, 'carousel', name);
+                          handleBtnClick(id, 'accordion', name);
                         }
                       },
                       {
-                        text: 'Carousel (Wide)',
+                        text: 'Vertical',
                         onclick: function () {
-                          handleBtnClick(id, 'bigcarousel', name);
+                          handleBtnClick(id, 'vertical', name);
                         }
                       }
                     ],
@@ -114,27 +114,27 @@
                 });
               },
               error: function( xhr, status ) {
-                return alert("Sorry, no active 'Gallery' could be found!");
+                return alert("Sorry, no active 'Timeline' could be found!");
               }
             });
           return options;
         })()
       });
 
-      // converts <img class="ss-inpagegallery" /> into shortcode [inpagegallery] on save
+      // converts <img class="ss-inpagetimeline" /> into shortcode [inpagetimeline] on save
       ed.on('SaveContent', function (o) {
         var content = jQuery(o.content);
-        content.find('.ss-inpagegallery').each(function () {
+        content.find('.ss-inpagetimeline').each(function () {
           var el = jQuery(this);
-          var shortCode = '[inpagegallery id="' + el.data('id') + '" type="' + el.data('type') + '"]' + el.attr('title') + '[/inpagegallery]';
+          var shortCode = '[inpagetimeline id="' + el.data('id') + '" type="' + el.data('type') + '"]' + el.attr('title') + '[/inpagetimeline]';
           el.replaceWith(shortCode);
         });
         o.content = jQuery('<div />').append(content).html(); // Little hack to get outerHTML string
       });
 
-      var shortTagRegex = /(.?)\[inpagegallery(.*?)\](.+?)\[\/\s*inpagegallery\s*\](.?)/gi;
+      var shortTagRegex = /(.?)\[inpagetimeline(.*?)\](.+?)\[\/\s*inpagetimeline\s*\](.?)/gi;
 
-      // restores <img class="ss-inpagegallery" /> from shortcode [inpagegallery] on load
+      // restores <img class="ss-inpagetimeline" /> from shortcode [inpagetimeline] on load
       ed.on('BeforeSetContent', function (o) {
         var matches = null, content = o.content;
         var prefix, suffix, attributes, attributeString, title;
@@ -165,9 +165,9 @@
           title = matches[3];
 
           imgEl = jQuery('<img/>').attr({
-            'src': url + '/img/gallery-' + (attributes.type) + '.png'
+            'src': url + '/img/timeline-' + (attributes.type) + '.png'
             , 'title': title
-            , 'class': 'ss-inpagegallery'
+            , 'class': 'ss-inpagetimeline'
             , 'width': 150
             , 'height': 50
           });
@@ -183,5 +183,5 @@
       });
     }
   });
-  tinymce.PluginManager.add("ss_insert_inpagegallery", tinymce.plugins.InsertInPageGallery);
+  tinymce.PluginManager.add("ss_insert_inpagetimeline", tinymce.plugins.InsertInPageTimeline);
 })();
