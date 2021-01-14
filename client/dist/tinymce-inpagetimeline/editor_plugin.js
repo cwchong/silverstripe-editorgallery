@@ -80,43 +80,44 @@
         type: 'menubutton',
         menu: (function () { 
           var options = [];
-          jQuery.ajax({
-            async: false,
-            url: ed.documentBaseURI.toAbsolute('inpagetimeline/json'),
-              data: { pageid: jQuery('#Form_EditForm_ID').val() }, 
-              success: function(apiResponseJson) {
-                if (!Object.keys(apiResponseJson).length)
-                  return; // alert("Sorry, no active 'Timeline' could be found!");
-                jQuery.each(apiResponseJson, function(id, name) {
-                  options.push({
-                    text: name,
-                    menu: [
-                      {
-                        text: 'Horizontal',
-                        onclick: function () {
-                          handleBtnClick(id, 'horizontal', name);
+          if (document.getElementById('Form_EditForm_ID')) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText.length) {
+                  apiResponseJson = JSON.parse(this.responseText);
+                  Object.keys(apiResponseJson).forEach(function(id) {
+                    var name = apiResponseJson[id];
+                    options.push({
+                      text: name,
+                      menu: [
+                        {
+                          text: 'Horizontal',
+                          onclick: function () {
+                            handleBtnClick(id, 'horizontal', name);
+                          }
+                        },
+                        {
+                          text: 'Accordion',
+                          onclick: function () {
+                            handleBtnClick(id, 'accordion', name);
+                          }
+                        },
+                        {
+                          text: 'Vertical',
+                          onclick: function () {
+                            handleBtnClick(id, 'vertical', name);
+                          }
                         }
-                      },
-                      {
-                        text: 'Accordion',
-                        onclick: function () {
-                          handleBtnClick(id, 'accordion', name);
-                        }
-                      },
-                      {
-                        text: 'Vertical',
-                        onclick: function () {
-                          handleBtnClick(id, 'vertical', name);
-                        }
-                      }
-                    ],
+                      ],
+                    });
                   });
-                });
-              },
-              error: function( xhr, status ) {
-                return alert("Sorry, no active 'Timeline' could be found!");
+                }
               }
-            });
+            };
+            xhttp.open('GET', ed.documentBaseURI.toAbsolute('inpagetimeline/json') + '?pageid=' + document.getElementById('Form_EditForm_ID').value, false);
+            xhttp.send();
+          }
           return options;
         })()
       });

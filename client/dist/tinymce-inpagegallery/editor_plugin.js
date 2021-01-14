@@ -80,44 +80,44 @@
         type: 'menubutton',
         menu: (function () { 
           var options = [];
-          jQuery.ajax({
-            async: false,
-            url: ed.documentBaseURI.toAbsolute('inpagegallery/json'),
-              data: { pageid: jQuery('#Form_EditForm_ID').val() }, 
-              success: function(apiResponseJson) {
-                if (!Object.keys(apiResponseJson).length) {
-                  return; // alert("Sorry, no active 'Gallery' could be found!");
-                }
-                jQuery.each(apiResponseJson, function(id, name) {
-                  options.push({
-                    text: name,
-                    menu: [
-                      {
-                        text: 'Grid',
-                        onclick: function () {
-                          handleBtnClick(id, 'grid', name);
+          if (document.getElementById('Form_EditForm_ID')) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText.length) {
+                  apiResponseJson = JSON.parse(this.responseText);
+                  Object.keys(apiResponseJson).forEach(function(id) {
+                    var name = apiResponseJson[id];
+                    options.push({
+                      text: name,
+                      menu: [
+                        {
+                          text: 'Grid',
+                          onclick: function () {
+                            handleBtnClick(id, 'grid', name);
+                          }
+                        },
+                        {
+                          text: 'Carousel',
+                          onclick: function () {
+                            handleBtnClick(id, 'carousel', name);
+                          }
+                        },
+                        {
+                          text: 'Carousel (Wide)',
+                          onclick: function () {
+                            handleBtnClick(id, 'bigcarousel', name);
+                          }
                         }
-                      },
-                      {
-                        text: 'Carousel',
-                        onclick: function () {
-                          handleBtnClick(id, 'carousel', name);
-                        }
-                      },
-                      {
-                        text: 'Carousel (Wide)',
-                        onclick: function () {
-                          handleBtnClick(id, 'bigcarousel', name);
-                        }
-                      }
-                    ],
+                      ],
+                    });
                   });
-                });
-              },
-            error: function (xhr, status) {
-                return alert("Sorry, no active 'Gallery' could be found!");
+                }
               }
-          });
+            };
+            xhttp.open('GET', ed.documentBaseURI.toAbsolute('inpagegallery/json') + '?pageid=' + document.getElementById('Form_EditForm_ID').value, false);
+            xhttp.send();
+          }
           return options;
         })()
       });
