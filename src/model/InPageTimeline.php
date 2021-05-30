@@ -93,8 +93,11 @@ class InPageTimeline extends DataObject
         if($this->ID) {
             $gridConfig = GridFieldConfig_RecordEditor::create();
             $gridConfig->addComponent(new GridFieldOrderableRows('SortOrder'));
-            $gridConfig->removeComponentsByType(GridFieldPaginator::class);
-            $gridConfig->removeComponentsByType(GridFieldPageCount::class);
+            /** @var GridFieldPaginator */
+            $paginator = $gridConfig->getComponentByType(GridFieldPaginator::class);
+            $paginator->setItemsPerPage(200);
+            // $gridConfig->removeComponentsByType(GridFieldPaginator::class);
+            // $gridConfig->removeComponentsByType(GridFieldPageCount::class);
             $gridField = GridField::create(
                 'Items',
                 'Items',

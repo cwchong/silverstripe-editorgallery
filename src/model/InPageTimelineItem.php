@@ -53,6 +53,10 @@ class InPageTimelineItem extends DataObject
         'Title' => 'Title',
         'SubTitle' => 'SubTitle'
     ];
+
+    private static $owns = [
+        'Image',
+    ];
     
     /**
      * @var string|array

@@ -91,8 +91,11 @@ class InPageGallery extends DataObject
             /** @var BulkUploader $uploadConfig */
             $uploadConfig = $gridConfig->getComponentByType(BulkUploader::class);
             $uploadConfig->setUfSetup('setFolderName', 'Gallery/' . $this->ID);
-            $gridConfig->removeComponentsByType(GridFieldPaginator::class);
-            $gridConfig->removeComponentsByType(GridFieldPageCount::class);
+            /** @var GridFieldPaginator */
+            $paginator = $gridConfig->getComponentByType(GridFieldPaginator::class);
+            $paginator->setItemsPerPage(200);
+            // $gridConfig->removeComponentsByType(GridFieldPaginator::class);
+            // $gridConfig->removeComponentsByType(GridFieldPageCount::class);
             $gridField = GridField::create(
                 'Photos',
                 'Photos',
@@ -129,13 +132,11 @@ class InPageGallery extends DataObject
     {
         // return null if the id argument is not valid
         if (!isset($arguments['id']) || !is_numeric($arguments['id'])) {
-            return '<p>meow</p>';
             return;
         }
         
         // Load the Advertisement DataObject using the id from $arguments array, else return null if it was not found
         if (!($inpagegallery = DataObject::get_by_id(InPageGallery::class, $arguments['id']))) {
-            return '<p>woff</p>';
             return;
         }
         
